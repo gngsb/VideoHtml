@@ -47,6 +47,7 @@
             <button class="layui-btn" id="btnSearch" data-type="reload">查询</button>
             <button type="button" class="layui-btn" id="btnLoad" style="display: none;">导出</button>
             <button class="layui-btn" id="btnAdd" data-type="reload">新增</button>
+            <button class="layui-btn" id="playVideo" data-type="reload">播放</button>
         </div>
 	</form>
     <table id="dg" lay-filter="dg"></table>
@@ -72,7 +73,8 @@
             //执行一个 table 实例
             table.render({
                 elem: '#dg',
-                url: 'http://localhost:9999/GetVideo',
+                // url: 'http://116.196.75.200:9997/GetVideo',
+                url: 'https://localhost:44331/api/VideoManage/GetVideo',
                 cellMinWidth: 95,
                 page: true,
                 height: "full-100",
@@ -93,7 +95,7 @@
                     , { title: '创建时间', field: 'createTime', align: "center", width: 200 }
                     , { title: '所属国家', field: 'title', align: "center", width: 100 }
                     , { title: '视频类别', field: 'typeName', align: "center", width: 100 }
-                    , { title: '备注', field: 'remarks', align: "center", width: 250 }
+                    , { title: '备注', field: 'remarks', align: "center", width: 500 }
                     // , {
                     //     title: '状态', field: 'OrderStauts', align: "center", hide: "true", width: 80, templet: function (d) {
                     //         var tempspan = '';
@@ -147,25 +149,30 @@
                         content: 'EditVideo.html?Vid=' + data.id
                     });
                 }else if (layEvent ==='delete') {
-                	$.ajax({
-		                url: 'http://localhost:9999/DeleteVideo?Vid='+data.id,
-		                dataType: 'json',
-		                type: 'get',
-		                success: function (data) {
-		                     if (data.code == '0') {
-                                    layer.msg('删除成功！', { time: 2000, icon: 1 });
-                                    //执行重新加载
-                                    table.reload('dg', {
-                                        page: {
-                                            curr: 1 //重新从第 1 页开始
-                                        }
-                                    });
-                                } else {
-                                    layer.msg('删除失败，请稍后再试！', { time: 2000, icon: 2 });
-                                }
-                                return false;
-		                }
-		            });
+					layer.confirm('您确定要删除吗？', {
+                            btn: ['Yes','No'] //按钮
+                        },function(){
+							$.ajax({
+								url: 'http://116.196.75.200:9997/DeleteVideo?Vid='+data.id,
+								dataType: 'json',
+								type: 'get',
+								success: function (data) {
+									 if (data.code == '0') {
+											layer.msg('删除成功！', { time: 2000, icon: 1 });
+											//执行重新加载
+											table.reload('dg', {
+												page: {
+													curr: 1 //重新从第 1 页开始
+												}
+											});
+										} else {
+											layer.msg('删除失败，请稍后再试！', { time: 2000, icon: 2 });
+										}
+										return false;
+								}
+							});
+						});
+                	
                 }
             });
         });
@@ -195,10 +202,22 @@
                 
             });
         });
+
+        //播放视频
+        var loadstr = '<video width="100%" height="100%"  controls="controls" autobuffer="autobuffer"  autoplay="autoplay" loop="loop"><source src="./Files/Video/火种源计划一期.mp4" type="video/mp4"></source></video>'
+        $('#playVideo').click(function () {
+            layer.open({
+                type: 1,
+                title: '播放视频',
+                content: loadstr,
+            });
+        });
+
+
         //所属国家下拉框赋值
         function ServiceProvider() {
             $.ajax({
-                url: 'http://localhost:9999/getList',
+                url: 'http://116.196.75.200:9997/getList',
                 dataType: 'json',
                 type: 'get',
                 async:false,
@@ -215,7 +234,7 @@
         //视频类别赋值
         function ServiceType() {
             $.ajax({
-                url: 'http://localhost:9999/getType',
+                url: 'http://116.196.75.200:9997/getType',
                 dataType: 'json',
                 type: 'get',
                 async: false,

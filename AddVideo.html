@@ -112,7 +112,7 @@
             var uploadInst = upload.render({
                 elem: '#ProUpload'
                 , size: 20000 //限制文件大小，单位 KB
-                , url: 'http://localhost:9999/AddImage' //改成您自己的上传接口
+                , url: 'http://116.196.75.200:9997/AddImage' //改成您自己的上传接口
                 , accept: 'images' //允许上传的文件类型
                 , exts: 'jpg|png|jpeg'
                 , before: function (obj) {
@@ -167,7 +167,7 @@
                         "ImgUrl": $('#proImgId').val(),
                         "Remarks":$('#VideoRemarks').val()
                     };
-                    var url = 'http://localhost:9999/AddVideo';
+                    var url = 'http://116.196.75.200:9997/AddVideo';
                     $.ajax({
                         url: url,
                         type: 'post',
@@ -240,7 +240,7 @@
         //所属国家下拉框赋值
         function ServiceProvider() {
             $.ajax({
-                url: 'http://localhost:9999/getList',
+                url: 'http://116.196.75.200:9997/getList',
                 dataType: 'json',
                 type: 'get',
                 async: false,
@@ -257,7 +257,7 @@
         //视频类别赋值
         function ServiceType() {
             $.ajax({
-                url: 'http://localhost:9999/getType',
+                url: 'http://116.196.75.200:9997/getType',
                 dataType: 'json',
                 type: 'get',
                 async: false,
