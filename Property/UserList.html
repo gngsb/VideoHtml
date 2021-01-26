@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta name="format-detection" content="telephone=no">
+    <meta charset="UTF-8">
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width,user-scalable=yes, minimum-scale=0.4, initial-scale=0.8,target-densitydpi=low-dpi" />
+    <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon" />
+    <link href="../css/font.css" rel="stylesheet" />
+    <link href="../css/xadmin.css" rel="stylesheet" />
+    <link href="../lib/layui/css/layui.css" rel="stylesheet" />
+    <script src="../Scripts/jquery-3.3.1.js"></script>
+    <script src="../lib/layui/layui.js"></script>
+    <script src="../js/xadmin.js"></script>
+    <script src="../lib/index.js"></script>
+    <script src="../lib/layui_exts/excel.js"></script>
+    <style>
+        hr {
+            height: 0px;
+            border: 0px;
+        }
+
+        .x-body {
+            padding-top: 0px;
+        }
+    </style>
+</head>
+
+<body>
+    <form id="searchForm" class="layui-form" onsubmit="return false;">
+        <div class="layui-input-inline">
+            <input type="text" name="UserName" id="UserName" placeholder="用户名称" autocomplete="off" class="layui-input">
+        </div>
+        <div class="layui-input-inline">
+            <input type="text" name="Phone" id="Phone" placeholder="用户手机号" autocomplete="off" class="layui-input">
+        </div>
+        <div class="layui-inline">
+            <!-- <label class="layui-form-label">用户入住时间</label> -->
+            <div class="layui-input-inline">
+                <input type="text" class="layui-input" id="StartTime" placeholder="入住开始时间">
+            </div>
+        </div>-
+        <div class="layui-inline">
+            <div class="layui-input-inline">
+                <input type="text" class="layui-input" id="EndTime" placeholder="入住截止时间">
+            </div>
+        </div>
+        <div class="layui-input-inline">
+            <button class="layui-btn" id="btnSearch" data-type="reload">查询</button>
+            <button class="layui-btn" id="btnAdd" data-type="reload">新增</button>
+        </div>
+    </form>
+    <table id="dg" lay-filter="dg"></table>
+    <script type="text/html" id="barDemo">
+        <a class="layui-btn layui-btn-xs" lay-event="edit" style="background-color:rgba(95, 184, 120, 1);">编辑</a>
+        <a class="layui-btn layui-btn-xs" lay-event="delete" style="background-color:rgba(95, 184, 120, 1);">删除</a>
+    </script>
+    <script>
+    layui.config({
+        base: '../lib/layui_exts/'
+    }).use(['laypage', 'layer', 'table', 'element', 'form', 'laydate'], function() {
+        var laypage = layui.laypage //分页
+        layer = layui.layer //弹层
+            , table = layui.table //表格
+            , form = layui.form, element = layui.element //元素操作
+            , laydate = layui.laydate;
+        var loading = layer.load();
+
+        //常规用法
+        laydate.render({
+            elem: '#StartTime'
+        });
+        laydate.render({
+            elem: '#EndTime'
+        });
+
+        if (localStorage["token"] == null) {
+            layer.msg('登录已失效，请重新登录', {
+                icon: 7,
+                time: 3000 //2秒关闭（如果不配置，默认是3秒）
+            }, function() {
+                parent.location.href = "../Login.html";
+            });
+            // layer.msg("登录已失效，请重新登录");
+            // parent.location.href = "Login.html";
+        }
+
+        //执行一个 table 实例
+        table.render({
+            elem: '#dg',
+            url: 'https://localhost:44331/api/User/GetPageList',
+            headers: {
+                token: localStorage["token"]
+            },
+            cellMinWidth: 95,
+            page: true,
+            height: "full-100",
+            limit: 10,
+            limits: [10, 20, 30, 50, 100, 500],
+            id: "dg",
+            type: "GET",
+            where: {
+                userName: $("#UserName").val(),
+                phone: $("#Phone").val(),
+                startTime: $("#StartTime").val(),
+                endTime: $("#EndTime").val()
+            },
+            cols: [
+                [
+
+                    { type: "numbers", title: "序号", align: "center", width: 70 },
+                    { title: 'ID', field: 'id', align: "center", hide: "true", width: 50 },
+                    { title: '用户名称', field: 'userName', align: "center", width: 200 },
+                    {
+                        title: '用户性别',
+                        field: 'sex',
+                        align: "center",
+                        width: 100,
+                        templet: function(d) {
+                            var tempspan = '';
+                            if (d.sex == 0) {
+                                tempspan = '<span>女</span>';
+                            } else {
+                                tempspan = '<span>男</span>';
+                            }
+                            return tempspan;
+                        }
+                    },
+                    { title: '联系方式', field: 'phone', align: "center", width: 300 },
+                    { title: '入住时间', field: 'comeTime', align: "center", width: 300 },
+                    { title: '房屋地址', field: 'houseId', align: "center", width: 200 }
+                    // , {
+                    //     title: '状态', field: 'OrderStauts', align: "center", hide: "true", width: 80, templet: function (d) {
+                    //         var tempspan = '';
+                    //         if (d.OrderStauts == 0) {
+                    //             tempspan = '<span >支付中</span>';
+                    //         } else if (d.UserState == 1) {
+
+                    //             tempspan = '<span>成功</span>';
+                    //         } else {
+                    //             tempspan = '<span>失败</span>';
+                    //         }
+                    //         return tempspan;
+                    //     }
+                    // }
+                    , { title: '操作', templet: '#barDemo', align: "center", width: 150, fixed: 'right' }
+                ]
+            ],
+            done: function(res, curr, count) {
+                //如果是异步请求数据方式，res即为你接口返回的信息。
+                //如果是直接赋值的方式，res即为：{data: [], count: 99} data为当前页数据、count为数据总长度
+
+                layer.close(loading);
+            }
+        });
+        //搜索
+        $("#btnSearch").on("click", function() {
+
+            table.reload("dg", {
+                height: "full-100",
+                page: {
+                    curr: 1 //重新从第 1 页开始
+                },
+                where: {
+                    Name: $("#VideoName").val(),
+                    CId: $("#IsActive").val(),
+                    TypeId: $("#VideoType").val()
+                }
+            });
+        });
+        //监听工具条
+        table.on('tool(dg)', function(obj) { //注：tool是工具条事件名，test是table原始容器的属性 lay-filter="对应的值"
+            var data = obj.data //获得当前行数据
+                ,
+                layEvent = obj.event; //获得 lay-event 对应的值sortProduce
+            if (layEvent === 'edit') {
+                layer.open({
+                    type: 2,
+                    area: ['97%', '100%'],
+                    fixed: false, //不固定
+                    scrollbar: false,
+                    maxmin: true,
+                    title: "视频编辑",
+                    content: 'EditVideo.html?Vid=' + data.id
+                });
+            } else if (layEvent === 'delete') {
+                layer.confirm('您确定要删除吗？', {
+                    btn: ['Yes', 'No'] //按钮
+                }, function() {
+                    $.ajax({
+                        url: 'https://localhost:44331/api/VideoManage/DeleteVideo?Vid=' + data.id,
+                        dataType: 'json',
+                        type: 'get',
+                        success: function(data) {
+                            if (data.code == '0') {
+                                layer.msg('删除成功！', { time: 2000, icon: 1 });
+                                //执行重新加载
+                                table.reload('dg', {
+                                    page: {
+                                        curr: 1 //重新从第 1 页开始
+                                    }
+                                });
+                            } else {
+                                layer.msg('删除失败，请稍后再试！', { time: 2000, icon: 2 });
+                            }
+                            return false;
+                        }
+                    });
+                });
+
+            }
+        });
+    });
+
+    //打开添加分组
+    $("#btnAdd").click(function() {
+        //iframe层-父子操作
+        layer.open({
+            type: 2,
+            area: ['97%', '100%'],
+            fixed: false, //不固定
+            scrollbar: false,
+            maxmin: true,
+            title: "添加/编辑用户",
+            content: 'AddUser.html',
+
+        });
+    });
+
+    //播放视频
+    var loadstr = '<video width="100%" height="100%"  controls="controls" autobuffer="autobuffer"  autoplay="autoplay" loop="loop"><source src="./Files/Video/火种源计划一期.mp4" type="video/mp4"></source></video>'
+    $('#playVideo').click(function() {
+        layer.open({
+            type: 1,
+            title: '播放视频',
+            content: loadstr,
+        });
+    });
+    </script>
+</body>
+
+</html>

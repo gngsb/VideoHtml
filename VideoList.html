@@ -1,6 +1,6 @@
-﻿
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html>
+
 <head>
     <meta name="format-detection" content="telephone=no">
     <meta charset="UTF-8">
@@ -27,9 +27,10 @@
         }
     </style>
 </head>
+
 <body>
-	<form id="searchForm" class="layui-form" onsubmit="return false;">
-		<div class="layui-input-inline">
+    <form id="searchForm" class="layui-form" onsubmit="return false;">
+        <div class="layui-input-inline">
             <input type="text" name="VideoName" id="VideoName" placeholder="视频名称" autocomplete="off" class="layui-input">
         </div>
         <div class="layui-input-inline">
@@ -42,7 +43,6 @@
                 <option value="">请选择视频类别</option>
             </select>
         </div>
-
         <div class="layui-input-inline">
             <button class="layui-btn" id="btnSearch" data-type="reload">查询</button>
             <button type="button" class="layui-btn" id="btnLoad" style="display: none;">导出</button>
@@ -52,62 +52,59 @@
         <div class="row" style="margin-top:20%;display: none;">
             <div class="col-lg-4"></div>
             <div class="col-lg-4">
-              <input type="text" value="请选择文件" size="20" name="upfile" id="upfile" style="border:1px dotted #ccc">
-              <input type="button" value="浏览" onclick="path.click()" style="border:1px solid #ccc;background:#fff">
-              <input type="file" id="path" style="display:none" multiple="multiple" onchange="upfile.value=this.value">
-              <br />
-              <span id="output">0%</span>
-              <button type="button" id="file" onclick="UploadStart()" style="border:1px solid #ccc;background:#fff">开始上传</button>
+                <input type="text" value="请选择文件" size="20" name="upfile" id="upfile" style="border:1px dotted #ccc">
+                <input type="button" value="浏览" onclick="path.click()" style="border:1px solid #ccc;background:#fff">
+                <input type="file" id="path" style="display:none" multiple="multiple" onchange="upfile.value=this.value">
+                <br />
+                <span id="output">0%</span>
+                <button type="button" id="file" onclick="UploadStart()" style="border:1px solid #ccc;background:#fff">开始上传</button>
             </div>
             <div class="col-lg-4"></div>
-          </div>
-	</form>
+        </div>
+    </form>
     <table id="dg" lay-filter="dg"></table>
     <script type="text/html" id="barDemo">
         <a class="layui-btn layui-btn-xs" lay-event="edit" style="background-color:rgba(95, 184, 120, 1);">编辑</a>
         <a class="layui-btn layui-btn-xs" lay-event="delete" style="background-color:rgba(95, 184, 120, 1);">删除</a>
     </script>
     <script>
-        layui.config({
-            base: '../lib/layui_exts/'
-        }).use(['laypage', 'layer', 'table', 'element', 'form', 'laydate'], function () {
-            var laypage = layui.laypage //分页
-            layer = layui.layer //弹层
-                , table = layui.table //表格
-                , form = layui.form
-                , element = layui.element //元素操作
-                , laydate = layui.laydate;
-            var loading = layer.load();
+    layui.config({
+        base: '../lib/layui_exts/'
+    }).use(['laypage', 'layer', 'table', 'element', 'form', 'laydate'], function() {
+        var laypage = layui.laypage //分页
+        layer = layui.layer //弹层
+            , table = layui.table //表格
+            , form = layui.form, element = layui.element //元素操作
+            , laydate = layui.laydate;
+        var loading = layer.load();
 
-            ServiceProvider();
-            ServiceType();
+        ServiceProvider();
+        ServiceType();
 
-            //执行一个 table 实例
-            table.render({
-                elem: '#dg',
-                // url: 'http://116.196.75.200:9997/GetVideo',
-                url: 'https://localhost:44331/api/VideoManage/GetVideo',
-                cellMinWidth: 95,
-                page: true,
-                height: "full-100",
-                limit: 10,
-                limits: [10, 20, 30, 50, 100, 500],
-                id: "dg",
-                type: "POST",
-                  where: {
-                        Name: $("#VideoName").val()
-                        , CId: $("#IsActive").val()
-                        ,TypeId:$("#VideoType").val()
-                    },
-                cols: [[
+        //执行一个 table 实例
+        table.render({
+            elem: '#dg',
+            // url: 'http://116.196.75.200:9997/GetVideo',
+            url: 'https://localhost:44331/api/VideoManage/GetVideo',
+            headers: {
+                Authorization: "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiJsaXUiLCJ1c2VyTmFtZSI6ImFkbWluIiwiZXhwIjoxNjExMjc5MzM3LCJpc3MiOiJpc3N1ZXIiLCJhdWQiOiJ2aWRlb3MifQ.EO6xYkfy5dM0SiyVgL8O5czwge0A4HYTF0Cu3BLEPnI"
+            },
+            cellMinWidth: 95,
+            page: true,
+            height: "full-100",
+            limit: 10,
+            limits: [10, 20, 30, 50, 100, 500],
+            id: "dg",
+            type: "POST",
+            where: {
+                Name: $("#VideoName").val(),
+                CId: $("#IsActive").val(),
+                TypeId: $("#VideoType").val()
+            },
+            cols: [
+                [
 
-                    { type: "numbers", title: "序号", align: "center", width: 70 }
-                    , { title: 'ID', field: 'id', align: "center", hide: "true", width: 50 }
-                    , { title: '视频名称', field: 'name', align: "center", width: 200 }
-                    , { title: '创建时间', field: 'createTime', align: "center", width: 200 }
-                    , { title: '所属国家', field: 'title', align: "center", width: 100 }
-                    , { title: '视频类别', field: 'typeName', align: "center", width: 100 }
-                    , { title: '备注', field: 'remarks', align: "center", width: 500 }
+                    { type: "numbers", title: "序号", align: "center", width: 70 }, { title: 'ID', field: 'id', align: "center", hide: "true", width: 50 }, { title: '视频名称', field: 'name', align: "center", width: 200 }, { title: '创建时间', field: 'createTime', align: "center", width: 200 }, { title: '所属国家', field: 'title', align: "center", width: 100 }, { title: '视频类别', field: 'typeName', align: "center", width: 100 }, { title: '备注', field: 'remarks', align: "center", width: 500 }
                     // , {
                     //     title: '状态', field: 'OrderStauts', align: "center", hide: "true", width: 80, templet: function (d) {
                     //         var tempspan = '';
@@ -123,196 +120,200 @@
                     //     }
                     // }
                     , { title: '操作', templet: '#barDemo', align: "center", width: 150, fixed: 'right' }
-                ]]
-                , done: function (res, curr, count) {
-                    //如果是异步请求数据方式，res即为你接口返回的信息。
-                    //如果是直接赋值的方式，res即为：{data: [], count: 99} data为当前页数据、count为数据总长度
+                ]
+            ],
+            done: function(res, curr, count) {
+                //如果是异步请求数据方式，res即为你接口返回的信息。
+                //如果是直接赋值的方式，res即为：{data: [], count: 99} data为当前页数据、count为数据总长度
 
-                    layer.close(loading);
+                layer.close(loading);
+            }
+        });
+        //搜索
+        $("#btnSearch").on("click", function() {
+
+            table.reload("dg", {
+                height: "full-100",
+                page: {
+                    curr: 1 //重新从第 1 页开始
+                },
+                where: {
+                    Name: $("#VideoName").val(),
+                    CId: $("#IsActive").val(),
+                    TypeId: $("#VideoType").val()
                 }
             });
-            //搜索
-            $("#btnSearch").on("click", function () {
-
-                table.reload("dg", {
-                    height: "full-100",
-                    page: {
-                        curr: 1 //重新从第 1 页开始
-                    },
-                    where: {
-                        Name: $("#VideoName").val()
-                        , CId: $("#IsActive").val()
-                        ,TypeId:$("#VideoType").val()
-                    }
+        });
+        //监听工具条
+        table.on('tool(dg)', function(obj) { //注：tool是工具条事件名，test是table原始容器的属性 lay-filter="对应的值"
+            var data = obj.data //获得当前行数据
+                ,
+                layEvent = obj.event; //获得 lay-event 对应的值sortProduce
+            if (layEvent === 'edit') {
+                layer.open({
+                    type: 2,
+                    area: ['97%', '100%'],
+                    fixed: false, //不固定
+                    scrollbar: false,
+                    maxmin: true,
+                    title: "视频编辑",
+                    content: 'EditVideo.html?Vid=' + data.id
                 });
-            });
-            //监听工具条
-            table.on('tool(dg)', function (obj) { //注：tool是工具条事件名，test是table原始容器的属性 lay-filter="对应的值"
-                var data = obj.data //获得当前行数据
-                    , layEvent = obj.event; //获得 lay-event 对应的值sortProduce
-                if (layEvent === 'edit') {
-                    layer.open({
-                        type: 2,
-                        area: ['97%', '100%'],
-                        fixed: false, //不固定
-                        scrollbar: false,
-                        maxmin: true, 
-                        title: "视频编辑",
-                        content: 'EditVideo.html?Vid=' + data.id
+            } else if (layEvent === 'delete') {
+                layer.confirm('您确定要删除吗？', {
+                    btn: ['Yes', 'No'] //按钮
+                }, function() {
+                    $.ajax({
+                        url: 'https://localhost:44331/api/VideoManage/DeleteVideo?Vid=' + data.id,
+                        dataType: 'json',
+                        type: 'get',
+                        success: function(data) {
+                            if (data.code == '0') {
+                                layer.msg('删除成功！', { time: 2000, icon: 1 });
+                                //执行重新加载
+                                table.reload('dg', {
+                                    page: {
+                                        curr: 1 //重新从第 1 页开始
+                                    }
+                                });
+                            } else {
+                                layer.msg('删除失败，请稍后再试！', { time: 2000, icon: 2 });
+                            }
+                            return false;
+                        }
                     });
-                }else if (layEvent ==='delete') {
-					layer.confirm('您确定要删除吗？', {
-                            btn: ['Yes','No'] //按钮
-                        },function(){
-							$.ajax({
-								url: 'http://116.196.75.200:9997/DeleteVideo?Vid='+data.id,
-								dataType: 'json',
-								type: 'get',
-								success: function (data) {
-									 if (data.code == '0') {
-											layer.msg('删除成功！', { time: 2000, icon: 1 });
-											//执行重新加载
-											table.reload('dg', {
-												page: {
-													curr: 1 //重新从第 1 页开始
-												}
-											});
-										} else {
-											layer.msg('删除失败，请稍后再试！', { time: 2000, icon: 2 });
-										}
-										return false;
-								}
-							});
-						});
-                	
-                }
-            });
+                });
+
+            }
         });
-        $("#btnLoad").click(function () {
+    });
+    $("#btnLoad").click(function() {
 
-            var OrderNo = $("#OrderNo").val()
-            var MediarNo = $("#MediarNo").val()
-            var MediarName = $("#MediarName").val()
-            var ProductName = $("#ProductName").val()
-            var ConsigneeName = $("#ConsigneeName").val()
-            var ConsigneePhone = $("#ConsigneePhone").val()
+        var OrderNo = $("#OrderNo").val()
+        var MediarNo = $("#MediarNo").val()
+        var MediarName = $("#MediarName").val()
+        var ProductName = $("#ProductName").val()
+        var ConsigneeName = $("#ConsigneeName").val()
+        var ConsigneePhone = $("#ConsigneePhone").val()
 
-            var para = "OrderNo=" + OrderNo + "&MediarNo=" + MediarNo + "&MediarName=" + MediarName + "&ProductName=" + ProductName + "&ConsigneeName=" + ConsigneeName + "&ConsigneePhone=" + ConsigneePhone + "";
-            exportOrders('/OrderInfo/loadOrderList?' + para);
+        var para = "OrderNo=" + OrderNo + "&MediarNo=" + MediarNo + "&MediarName=" + MediarName + "&ProductName=" + ProductName + "&ConsigneeName=" + ConsigneeName + "&ConsigneePhone=" + ConsigneePhone + "";
+        exportOrders('/OrderInfo/loadOrderList?' + para);
+    });
+
+    //打开添加分组
+    $("#btnAdd").click(function() {
+        //iframe层-父子操作
+        layer.open({
+            type: 2,
+            area: ['97%', '100%'],
+            fixed: false, //不固定
+            scrollbar: false,
+            maxmin: true,
+            title: "添加/编辑商品",
+            content: 'AddVideo.html?type=add',
+
         });
+    });
 
-          //打开添加分组
-        $("#btnAdd").click(function () {
-            //iframe层-父子操作
-            layer.open({
-                type: 2,
-                area: ['97%', '100%'],
-                fixed: false, //不固定
-                scrollbar: false,
-                maxmin: true, title: "添加/编辑商品",
-                content: 'AddVideo.html?type=add',
-                
-            });
+    //播放视频
+    var loadstr = '<video width="100%" height="100%"  controls="controls" autobuffer="autobuffer"  autoplay="autoplay" loop="loop"><source src="./Files/Video/火种源计划一期.mp4" type="video/mp4"></source></video>'
+    $('#playVideo').click(function() {
+        layer.open({
+            type: 1,
+            title: '播放视频',
+            content: loadstr,
         });
+    });
 
-        //播放视频
-        var loadstr = '<video width="100%" height="100%"  controls="controls" autobuffer="autobuffer"  autoplay="autoplay" loop="loop"><source src="./Files/Video/火种源计划一期.mp4" type="video/mp4"></source></video>'
-        $('#playVideo').click(function () {
-            layer.open({
-                type: 1,
-                title: '播放视频',
-                content: loadstr,
-            });
+
+    //所属国家下拉框赋值
+    function ServiceProvider() {
+        $.ajax({
+            url: 'https://localhost:44331/api/VideoManage/getList',
+            dataType: 'json',
+            type: 'get',
+            async: false,
+            success: function(data) {
+                $.each(data, function(index, item) {
+                    $('#IsActive').append(new Option(item.Title, item.Id)); // 下拉菜单里添加元素
+                    //初始化所有select标签
+                    form.render("select");
+                });
+            }
         });
+    }
+
+    //视频类别赋值
+    function ServiceType() {
+        $.ajax({
+            url: 'https://localhost:44331/api/VideoManage/getType',
+            dataType: 'json',
+            type: 'get',
+            async: false,
+            success: function(data) {
+                $.each(data, function(index, item) {
+                    $('#VideoType').append(new Option(item.TypeName, item.Id)); // 下拉菜单里添加元素
+                    //初始化所有select标签
+                    form.render("select");
+                });
+            }
+        });
+    }
 
 
-        //所属国家下拉框赋值
-        function ServiceProvider() {
-            $.ajax({
-                url: 'http://116.196.75.200:9997/getList',
-                dataType: 'json',
-                type: 'get',
-                async:false,
-                success: function (data) {
-                    $.each(data, function (index, item) {
-                        $('#IsActive').append(new Option(item.Title, item.Id));// 下拉菜单里添加元素
-                        //初始化所有select标签
-                        form.render("select");
-                    });
-                }
-            });
-        }
+    //上传视频
+    var UploadPath = "";
+    //开始上传
+    function UploadStart() {
+        var file = $("#path")[0].files[0];
+        AjaxFile(file, 0);
+    }
 
-        //视频类别赋值
-        function ServiceType() {
-            $.ajax({
-                url: 'http://116.196.75.200:9997/getType',
-                dataType: 'json',
-                type: 'get',
-                async: false,
-                success: function (data) {
-                    $.each(data, function (index, item) {
-                        $('#VideoType').append(new Option(item.TypeName, item.Id));// 下拉菜单里添加元素
-                        //初始化所有select标签
-                        form.render("select");
-                    });
-                }
-            });
-        }
-
-
-        //上传视频
-        var UploadPath = "";
-        //开始上传
-        function UploadStart() {
-          var file = $("#path")[0].files[0];
-          AjaxFile(file, 0);
-        }
-        function AjaxFile(file, i) {
-          var name = file.name, //文件名
-          size = file.size, //总大小shardSize = 2 * 1024 * 1024, 
-          shardSize = 2 * 1024 * 1024,//以2MB为一个分片
-          shardCount = Math.ceil(size / shardSize); //总片数
-          if (i >= shardCount) {
+    function AjaxFile(file, i) {
+        var name = file.name, //文件名
+            size = file.size, //总大小shardSize = 2 * 1024 * 1024, 
+            shardSize = 2 * 1024 * 1024, //以2MB为一个分片
+            shardCount = Math.ceil(size / shardSize); //总片数
+        if (i >= shardCount) {
             return;
-          }
-          //计算每一片的起始与结束位置
-          var start = i * shardSize,
-          end = Math.min(size, start + shardSize);
-          //构造一个表单，FormData是HTML5新增的
-          var form = new FormData();
-          form.append("data", file.slice(start, end)); //slice方法用于切出文件的一部分
-          form.append("lastModified", file.lastModified);
-          form.append("fileName", name);
-          form.append("total", shardCount); //总片数
-          form.append("index", i + 1); //当前是第几片
-          UploadPath = file.lastModified
-          //Ajax提交文件
-          $.ajax({
+        }
+        //计算每一片的起始与结束位置
+        var start = i * shardSize,
+            end = Math.min(size, start + shardSize);
+        //构造一个表单，FormData是HTML5新增的
+        var form = new FormData();
+        form.append("data", file.slice(start, end)); //slice方法用于切出文件的一部分
+        form.append("lastModified", file.lastModified);
+        form.append("fileName", name);
+        form.append("total", shardCount); //总片数
+        form.append("index", i + 1); //当前是第几片
+        UploadPath = file.lastModified
+        //Ajax提交文件
+        $.ajax({
             url: "https://localhost:44331/api/Upload/UploadVideo",
             type: "POST",
             data: form,
             async: true, //异步
             processData: false, //很重要，告诉jquery不要对form进行处理
             contentType: false, //很重要，指定为false才能形成正确的Content-Type
-            success: function (result) {
-              if (result != null) {
-                i = result.number++;
-                var num = Math.ceil(i * 100 / shardCount);
-                $("#output").text(num + '%');
-                AjaxFile(file, i);
-                if (result.mergeOk) {
-                  var filepath = $("#path");
-                  filepath.after(filepath.clone().val(""));
-                  filepath.remove();//清空input file
-                  $('#upfile').val('请选择文件');
-                  alert("success!!!");
+            success: function(result) {
+                if (result != null) {
+                    i = result.number++;
+                    var num = Math.ceil(i * 100 / shardCount);
+                    $("#output").text(num + '%');
+                    AjaxFile(file, i);
+                    if (result.mergeOk) {
+                        var filepath = $("#path");
+                        filepath.after(filepath.clone().val(""));
+                        filepath.remove(); //清空input file
+                        $('#upfile').val('请选择文件');
+                        alert("success!!!");
+                    }
                 }
-              }
             }
-          });
-        }
-
+        });
+    }
     </script>
 </body>
+
 </html>

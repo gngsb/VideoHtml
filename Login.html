@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <title>后台管理-登录</title>
+    <!-- <link rel="stylesheet" href="layui/css/layui.css"> -->
+    <link href="lib/layui/css/layui.css" rel="stylesheet" />
+    <!-- <link rel="stylesheet" href="css/admin.css"> -->
+    <link href="lib/layui/css/admin.css" rel="stylesheet" />
+</head>
+<style type="text/css">
+    .loginbox-title {
+        text-align: center;
+        font-size: 26px;
+        color: aliceblue;
+        margin: 15px;
+    }
+</style>
+
+<body>
+    <form form class="layui-form layui-form-pane" action="" id="signin" lay-filter="SmsSignIndex">
+        <div id="container">
+            <div class="admin-login-background">
+                <div class="loginbox-title">登录</div>
+                <!--<div class="admin-header">-->
+                <!--<img src="image/ex_logo.png" class="admin-logo">-->
+                <!--</div>-->
+                <div>
+                    <i class="layui-icon layui-icon-username admin-icon admin-icon-username"></i>
+                    <input type="text" name="userName" id="userName" placeholder="请输入用户名" autocomplete="off" class="layui-input admin-input admin-input-username">
+                </div>
+                <div>
+                    <i class="layui-icon layui-icon-password admin-icon admin-icon-password"></i>
+                    <input type="password" name="passWord" id="passWord" placeholder="请输入密码" autocomplete="off" class="layui-input admin-input admin-input-verify">
+                </div>
+                <!-- <div>
+                <input type="text" name="verify"
+                       placeholder="请输入验证码"
+                       autocomplete="off"
+                       class="layui-input admin-input admin-input-verify">
+                <img class="admin-captcha" src=""
+                     onclick="updateVerify()">
+            </div> -->
+                <!-- <button class="layui-btn admin-button" lay-submit lay-filter="formDemo">登陆</button> -->
+                <button class="layui-btn admin-button" lay-submit="" lay-filter="login" id="login">登录</button>
+            </div>
+        </div>
+    </form>
+    <!-- <script src="layui/layui.js"></script> -->
+    <script src="Scripts/jquery-3.3.1.js"></script>
+    <script src="lib/layui/layui.js"></script>
+    <script src="js/xadmin.js"></script>
+    <script src="js/jsencrypt.min.js"></script>
+    <script src="js/toolCommon.js"></script>
+    <script>
+    function updateVerify() {
+
+    }
+    var form;
+    ///加载
+    layui.use(['form', 'layedit', 'laydate', 'upload'], function() {
+        form = layui.form;
+        layui.form.render();
+        //监听提交
+        form.on('submit(login)', function(data) {
+            var username = $("#username").val();
+            var pass = $("#password").val();
+            //layer.msg("德爷发出了嗝嗝嗝的笑声！" + username + pass);
+            // alert("德爷发出了嗝嗝嗝的笑声！");
+            var sendData = {
+                "userName": $("#userName").val(),
+                "passWord": $('#passWord').val()
+            };
+            var formData = $('#signin').serialize();
+            var url = 'https://localhost:44331/api/Account/Login';
+            $.ajax({
+                url: url,
+                type: 'post',
+                data: JSON.stringify(sendData),
+                contentType: "application/json",
+                dataType: 'json',
+                success: function(data) {
+                    if (data.code == 0) {
+                        layer.msg('登录成功');
+                        localStorage["token"] = data.msg;
+                        parent.location.href = "IndexPage.html";
+
+                    } else {
+                        layer.msg('登录失败');
+                    }
+                },
+                error: function(xhr) {
+                    layer.msg('登录失败');
+                }
+            });
+            return false;
+        });
+    });
+    </script>
+</body>
+
+</html>
