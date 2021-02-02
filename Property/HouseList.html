@@ -31,21 +31,16 @@
 <body>
     <form id="searchForm" class="layui-form" onsubmit="return false;">
         <div class="layui-input-inline">
-            <input type="text" name="UserName" id="UserName" placeholder="用户名称" autocomplete="off" class="layui-input">
+            <input type="text" name="Address" id="Address" placeholder="房屋地址" autocomplete="off" class="layui-input">
         </div>
         <div class="layui-input-inline">
-            <input type="text" name="Phone" id="Phone" placeholder="用户手机号" autocomplete="off" class="layui-input">
-        </div>
-        <div class="layui-inline">
-            <!-- <label class="layui-form-label">用户入住时间</label> -->
-            <div class="layui-input-inline">
-                <input type="text" class="layui-input" id="StartTime" placeholder="入住开始时间">
-            </div>
-        </div>-
-        <div class="layui-inline">
-            <div class="layui-input-inline">
-                <input type="text" class="layui-input" id="EndTime" placeholder="入住截止时间">
-            </div>
+            <select id="HouseType" lay-verify="required" lay-search="">
+                <option value="-1">请选择房屋类型</option>
+                <option value="0">两室一厅一厨一卫</option>
+                <option value="1">三室一厅一厨一卫</option>
+                <option value="2">三室两厅一厨一卫</option>
+                <option value="3">三室两厅一厨两卫</option>
+            </select>
         </div>
         <div class="layui-input-inline">
             <button class="layui-btn" id="btnSearch" data-type="reload">查询</button>
@@ -90,7 +85,7 @@
         //执行一个 table 实例
         table.render({
             elem: '#dg',
-            url: 'https://localhost:44331/api/User/GetPageList',
+            url: 'https://localhost:44331/api/House/GetPageList',
             headers: {
                 token: localStorage["token"]
             },
@@ -102,35 +97,35 @@
             id: "dg",
             type: "GET",
             where: {
-                userName: $("#UserName").val(),
-                phone: $("#Phone").val(),
-                startTime: $("#StartTime").val(),
-                endTime: $("#EndTime").val()
+                Address: $("#Address").val(),
+                HouseType: $("#HouseType").val()
             },
             cols: [
                 [
 
                     { type: "numbers", title: "序号", align: "center", width: 70 },
                     { title: 'ID', field: 'id', align: "center", hide: "true", width: 50 },
-                    { title: '用户名称', field: 'userName', align: "center", width: 200 },
+                    { title: '房屋地址', field: 'address', align: "center", width: 200 },
                     {
-                        title: '用户性别',
-                        field: 'sex',
+                        title: '房屋类型',
+                        field: 'houseType',
                         align: "center",
-                        width: 100,
+                        width: 300,
                         templet: function(d) {
                             var tempspan = '';
-                            if (d.sex == 0) {
-                                tempspan = '<span>女</span>';
+                            if (d.houseType == 0) {
+                                tempspan = '<span>两室一厅一厨一卫</span>';
+                            } else if (d.houseType == 1) {
+                                tempspan = '<span>三室一厅一厨一卫</span>';
+                            } else if (d.houseType == 2) {
+                                tempspan = '<span>三室两厅一厨一卫</span>';
                             } else {
-                                tempspan = '<span>男</span>';
+                                tempspan = '<span>三室两厅一厨两卫</span>';
                             }
                             return tempspan;
                         }
                     },
-                    { title: '联系方式', field: 'phone', align: "center", width: 300 },
-                    { title: '入住时间', field: 'comeTime', align: "center", width: 300 },
-                    { title: '房屋地址', field: 'houseId', align: "center", width: 200 }
+                    { title: '房屋面积', field: 'houseArea', align: "center", width: 300 }
                     // , {
                     //     title: '状态', field: 'OrderStauts', align: "center", hide: "true", width: 80, templet: function (d) {
                     //         var tempspan = '';

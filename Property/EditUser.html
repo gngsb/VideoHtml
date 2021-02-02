@@ -34,6 +34,7 @@
                 <div class="layui-form-mid fontColorRed " id="rpshowMsg" style="margin-right:2px;">*</div>
                 <label class="layui-form-label">用户名称：</label>
                 <div class="layui-input-inline">
+                    <input type="hidden" name="Uid" id="Uid">
                     <input name="UserName" id="UserName" placeholder="请输入用户名称" autocomplete="off" class="layui-input ReadOnlyState" type="text">
                 </div>
             </div>
@@ -98,6 +99,8 @@
 
         ServiceProvider();
 
+        SelectUserInfo();
+
         layui.form.render();
 
         var subtips;
@@ -118,6 +121,7 @@
                 //     return false;
                 // }
                 var sendData = {
+                    "id": parseInt($('#Uid').val()),
                     "userName": $('#UserName').val(),
                     "houseId": $('#address').val(),
                     "sex": $('#Sex').val(),
@@ -129,7 +133,7 @@
                     // "sex": 0,
                     // "userName": "张三丰"
                 };
-                var url = 'https://localhost:44331/api/User/AddUserInfo';
+                var url = 'https://localhost:44331/api/User/UpdateUserInfo';
                 $.ajax({
                     url: url,
                     type: 'post',
@@ -192,6 +196,36 @@
                 });
             }
         });
+    }
+
+    //获取用户信息
+    function SelectUserInfo() {
+        var Uid = getQueryString("Uid");
+        $("#Uid").val(Uid);
+        $.ajax({
+            url: 'https://localhost:44331/api/User/GetUserInfo?id=' + Uid,
+            dataType: 'json',
+            type: 'get',
+            async: false,
+            success: function(data) {
+                $("#UserName").val(data.userName);
+                $("#Phone").val(data.phone);
+                $("#NumberId").val(data.numberId);
+                $("#Sex").val(data.sex);
+                $("#address").val(data.houseId);
+                //初始化所有select标签
+                form.render("select");
+            }
+        });
+    }
+
+    function getQueryString(name) {
+        var reg = new RegExp('(^|&)' + name + '=([^&]*)(&|$)', 'i');
+        var r = window.location.search.substr(1).match(reg);
+        if (r != null) {
+            return unescape(r[2]);
+        }
+        return null;
     }
     </script>
 </body>
