@@ -35,7 +35,7 @@
         </div>
         <div class="layui-input-inline">
             <select id="HouseType" lay-verify="required" lay-search="">
-                <option value="-1">请选择房屋类型</option>
+                <option value="-1">请选择房屋户型</option>
                 <option value="0">两室一厅一厨一卫</option>
                 <option value="1">三室一厅一厨一卫</option>
                 <option value="2">三室两厅一厨一卫</option>
@@ -50,7 +50,7 @@
     <table id="dg" lay-filter="dg"></table>
     <script type="text/html" id="barDemo">
         <a class="layui-btn layui-btn-xs" lay-event="edit" style="background-color:rgba(95, 184, 120, 1);">编辑</a>
-        <a class="layui-btn layui-btn-xs" lay-event="delete" style="background-color:rgba(95, 184, 120, 1);">删除</a>
+        <!-- <a class="layui-btn layui-btn-xs" lay-event="delete" style="background-color:rgba(95, 184, 120, 1);">删除</a> -->
     </script>
     <script>
     layui.config({
@@ -179,34 +179,9 @@
                     scrollbar: false,
                     maxmin: true,
                     title: "用户信息编辑",
-                    content: 'EditUser.html?Uid=' + data.id
+                    content: 'EditUser.html?Hid=' + data.id
                 });
-            } else if (layEvent === 'delete') {
-                layer.confirm('您确定要删除吗？', {
-                    btn: ['Yes', 'No'] //按钮
-                }, function() {
-                    $.ajax({
-                        url: 'https://localhost:44331/api/User/DeleteUserInfo?id=' + data.id,
-                        dataType: 'json',
-                        type: 'get',
-                        success: function(data) {
-                            if (data.code == '0') {
-                                layer.msg('删除成功！', { time: 2000, icon: 1 });
-                                //执行重新加载
-                                table.reload('dg', {
-                                    page: {
-                                        curr: 1 //重新从第 1 页开始
-                                    }
-                                });
-                            } else {
-                                layer.msg('删除失败，请稍后再试！', { time: 2000, icon: 2 });
-                            }
-                            return false;
-                        }
-                    });
-                });
-
-            }
+            } 
         });
     });
 
@@ -219,19 +194,9 @@
             fixed: false, //不固定
             scrollbar: false,
             maxmin: true,
-            title: "添加/编辑用户",
-            content: 'AddUser.html',
+            title: "添加/编辑信息",
+            content: 'AddHouse.html',
 
-        });
-    });
-
-    //播放视频
-    var loadstr = '<video width="100%" height="100%"  controls="controls" autobuffer="autobuffer"  autoplay="autoplay" loop="loop"><source src="./Files/Video/火种源计划一期.mp4" type="video/mp4"></source></video>'
-    $('#playVideo').click(function() {
-        layer.open({
-            type: 1,
-            title: '播放视频',
-            content: loadstr,
         });
     });
     </script>

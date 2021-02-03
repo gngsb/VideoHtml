@@ -1,0 +1,197 @@
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <title>用户管理</title>
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <script src="../Scripts/jquery-3.3.1.js"></script>
+    <script src="../lib/layui/layui.js"></script>
+    <script src="../js/jsencrypt.min.js"></script>
+    <script src="../js/toolCommon.js"></script>
+    <link href="../lib/layui/css/layui.css" rel="stylesheet" />
+    <style>
+        .fontColorRed {
+            color: red;
+        }
+
+        .fontColordarkgray {
+            color: darkgray;
+        }
+    </style>
+    <style>
+        hr {
+            height: 0px;
+            border: 0px;
+        }
+    </style>
+</head>
+
+<body>
+    <form class="layui-form layui-form-pane" action="" lay-filter="SmsSignIndex">
+        <div class="layui-form-item">
+            <div class="layui-inline">
+                <div class="layui-form-mid fontColorRed " style="margin-right:2px;">*</div>
+                <label class="layui-form-label">房屋地址：</label>
+                <div class="layui-input-inline">
+                    <input type="hidden" name="Hid" id="Hid">
+                    <input name="Address" id="Address" placeholder="请输入房屋地址" autocomplete="off"
+                        class="layui-input ReadOnlyState" type="text">
+                </div>
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <div class="layui-inline">
+                <div class="layui-form-mid fontColorRed " style="margin-right:2px;">*</div>
+                <label class="layui-form-label">房屋户型：</label>
+                <div class="layui-input-inline">
+                    <select id="HouseType" lay-verify="required" lay-search="">
+                        <option value="-1">请选择房屋户型</option>
+                        <option value="0">两室一厅一厨一卫</option>
+                        <option value="1">三室一厅一厨一卫</option>
+                        <option value="2">三室两厅一厨一卫</option>
+                        <option value="3">三室两厅一厨两卫</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <div class="layui-inline">
+                <div class="layui-form-mid fontColorRed " id="rpshowMsg" style="margin-right:2px;">*</div>
+                <label class="layui-form-label">房屋面积：</label>
+                <div class="layui-input-inline">
+                    <input name="HouseArea" id="HouseArea" placeholder="请输入房屋面积" autocomplete="off"
+                        class="layui-input ReadOnlyState" type="text">
+                </div>
+            </div>
+        </div>
+        <div class="layui-form-item needhide">
+            <button class="layui-btn" lay-submit="" lay-filter="SaveUser" id="SaveUser">保存</button>
+            <button class="layui-btn" id="reset" type="button">取消</button>
+        </div>
+    </form>
+    <script type="text/javascript">
+        var form;
+        var layer;
+        ///加载
+        layui.use(['form', 'layedit', 'laydate', 'upload'], function () {
+            form = layui.form;
+            layer = layui.layer,
+                laydate = layui.laydate,
+                layedit = layui.layedit,
+                upload = layui.upload;
+
+            //获取当前房屋信息
+            selectHouseInfo();
+
+            layui.form.render();
+
+            var subtips;
+            //监听提交
+            form.on('submit(SaveUser)', function (data) {
+                //  if (Faxtest() && Emailtest() && CompanyTeltest() && QQtest() && Phonetest()) {
+                if ($('#Address').val() != "" && $('#HouseType').val() != "-1" && $('#HouseArea').val != "") {
+                    // if ($('#VideoName').val() == "") {
+                    //     alert("请输入视频名称");
+                    //     return false;
+                    // }
+                    // if ($('#IsActive').val() == "") {
+                    //     alert("请选择所属国家");
+                    //     return false;
+                    // }
+                    // if ($('#VideoType').val() == "-1") {
+                    //     alert("请选择视频类别");
+                    //     return false;
+                    // }
+                    var sendData = {
+                        "id": parseInt($('#Uid').val()),
+                        "userName": $('#UserName').val(),
+                        "houseId": $('#address').val(),
+                        "sex": $('#Sex').val(),
+                        "phone": $('#Phone').val(),
+                        "numberId": $('#NumberId').val()
+                        // "houseId": 1,
+                        // "numberId": "371522199855562589",
+                        // "phone": "18765838825",
+                        // "sex": 0,
+                        // "userName": "张三丰"
+                    };
+                    var url = 'https://localhost:44331/api/House/UpdateHouseInfo';
+                    $.ajax({
+                        url: url,
+                        type: 'post',
+                        data: JSON.stringify(sendData),
+                        contentType: "application/json",
+                        dataType: 'json',
+                        success: function (data) {
+                            if (data.code == 0) {
+                                layer.msg('用户信息保存成功！');
+                                parent.location.href = "UserList.html";
+                                parent.layer.close(index);
+                                ////执行重载
+                                //parent.layui.table.reload('tempTab', {
+                                //    page: {
+                                //        curr: 1 //重新从第 1 页开始
+                                //    }
+                                //});
+                                // parent.layer.close(index);
+                            } else if (data.code == 200) {
+                                layer.msg('视频保存失败');
+                            }
+                        },
+                        error: function (xhr) {
+                            layer.msg('保存失败！');
+                        }
+                    });
+                    //} else {
+                    //    layer.msg('提交失败，请检查必填项是否遗漏！');
+                    //}
+                } else {
+                    layer.msg('提交失败，请检查必填项是否遗漏！');
+                }
+                return false;
+            });
+
+        });
+
+
+        //取消
+        $("#reset").click(function () {
+            //parent.location.href = "VideoList.html";
+            //layer.close(index);
+            var index = parent.layer.getFrameIndex(window.name); //先得到当前iframe层的索引
+            //layer.msg(index);
+            parent.layer.close(index); //再执行关闭   
+        });
+
+//获取当前房屋信息
+function selectHouseInfo(){
+var Hid = getQueryString("Hid");
+        $("#Hid").val(Hid);
+        $.ajax({
+            url: 'https://localhost:44331/api/House/GetHouseInfo?id=' + Uid,
+            dataType: 'json',
+            type: 'get',
+            async: false,
+            success: function(data) {
+                $("#Address").val(data.address);
+                $("#HouseType").val(data.houseType);
+                $("#HouseArea").val(data.houseArea);
+                //初始化所有select标签
+                form.render("select");
+            }
+        });
+}
+
+        function getQueryString(name) {
+            var reg = new RegExp('(^|&)' + name + '=([^&]*)(&|$)', 'i');
+            var r = window.location.search.substr(1).match(reg);
+            if (r != null) {
+                return unescape(r[2]);
+            }
+            return null;
+        }
+    </script>
+</body>
+
+</html>
