@@ -159,10 +159,8 @@
                     curr: 1 //重新从第 1 页开始
                 },
                 where: {
-                    userName: $("#UserName").val(),
-                    phone: $("#Phone").val(),
-                    startTime: $("#StartTime").val(),
-                    endTime: $("#EndTime").val()
+                    Address: $("#Address").val(),
+                    HouseType: $("#HouseType").val()
                 }
             });
         });
@@ -179,7 +177,7 @@
                     scrollbar: false,
                     maxmin: true,
                     title: "用户信息编辑",
-                    content: 'EditUser.html?Hid=' + data.id
+                    content: 'EditHouse.html?Hid=' + data.id
                 });
             } 
         });

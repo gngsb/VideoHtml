@@ -66,7 +66,7 @@
             </div>
         </div>
         <div class="layui-form-item needhide">
-            <button class="layui-btn" lay-submit="" lay-filter="SaveUser" id="SaveUser">保存</button>
+            <button class="layui-btn" lay-submit="" lay-filter="SaveHouse" id="SaveHouse">保存</button>
             <button class="layui-btn" id="reset" type="button">取消</button>
         </div>
     </form>
@@ -88,7 +88,7 @@
 
             var subtips;
             //监听提交
-            form.on('submit(SaveUser)', function (data) {
+            form.on('submit(SaveHouse)', function (data) {
                 //  if (Faxtest() && Emailtest() && CompanyTeltest() && QQtest() && Phonetest()) {
                 if ($('#Address').val() != "" && $('#HouseType').val() != "-1" && $('#HouseArea').val != "") {
                     // if ($('#VideoName').val() == "") {
@@ -104,12 +104,10 @@
                     //     return false;
                     // }
                     var sendData = {
-                        "id": parseInt($('#Uid').val()),
-                        "userName": $('#UserName').val(),
-                        "houseId": $('#address').val(),
-                        "sex": $('#Sex').val(),
-                        "phone": $('#Phone').val(),
-                        "numberId": $('#NumberId').val()
+                        "id": parseInt($('#Hid').val()),
+                        "address": $('#Address').val(),
+                        "houseType": parseInt($('#HouseType').val()),
+                        "houseArea": $('#HouseArea').val()
                         // "houseId": 1,
                         // "numberId": "371522199855562589",
                         // "phone": "18765838825",
@@ -126,7 +124,7 @@
                         success: function (data) {
                             if (data.code == 0) {
                                 layer.msg('用户信息保存成功！');
-                                parent.location.href = "UserList.html";
+                                parent.location.href = "HouseList.html";
                                 parent.layer.close(index);
                                 ////执行重载
                                 //parent.layui.table.reload('tempTab', {
@@ -169,7 +167,7 @@ function selectHouseInfo(){
 var Hid = getQueryString("Hid");
         $("#Hid").val(Hid);
         $.ajax({
-            url: 'https://localhost:44331/api/House/GetHouseInfo?id=' + Uid,
+            url: 'https://localhost:44331/api/House/GetHouseInfo?id=' + Hid,
             dataType: 'json',
             type: 'get',
             async: false,

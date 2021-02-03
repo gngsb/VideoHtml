@@ -119,7 +119,7 @@
                         success: function (data) {
                             if (data.code == 0) {
                                 layer.msg('房屋信息保存成功！');
-                                parent.location.href = "UserList.html";
+                                parent.location.href = "HouseList.html";
                                 parent.layer.close(index);
                                 ////执行重载
                                 //parent.layui.table.reload('tempTab', {
@@ -129,7 +129,7 @@
                                 //});
                                 // parent.layer.close(index);
                             } else if (data.code == 200) {
-                                layer.msg('视频保存失败');
+                                layer.msg('房屋信息保存失败');
                             }
                         },
                         error: function (xhr) {
