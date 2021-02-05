@@ -2,7 +2,7 @@
 
 <head>
     <meta charset="UTF-8">
-    <title>房屋管理</title>
+    <title>缴费管理</title>
     <meta name="renderer" content="webkit">
     <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
     <script src="../Scripts/jquery-3.3.1.js"></script>
@@ -31,25 +31,22 @@
     <form class="layui-form layui-form-pane" action="" lay-filter="SmsSignIndex">
         <div class="layui-form-item">
             <div class="layui-inline">
-                <div class="layui-form-mid fontColorRed " style="margin-right:2px;">*</div>
-                <label class="layui-form-label">房屋地址：</label>
+                <div class="layui-form-mid fontColorRed" style="margin-right:2px;"></div>
+                <label class="layui-form-label">用户姓名：</label>
                 <div class="layui-input-inline">
-                    <input name="Address" id="Address" placeholder="请输入房屋地址" autocomplete="off"
-                        class="layui-input ReadOnlyState" type="text">
+                    <select id="UserName" lay-verify="required" lay-search="">
+                        <option value="">请直接选择或搜索名</option>
+                    </select>
                 </div>
             </div>
         </div>
         <div class="layui-form-item">
             <div class="layui-inline">
-                <div class="layui-form-mid fontColorRed " style="margin-right:2px;">*</div>
-                <label class="layui-form-label">房屋户型：</label>
+                <div class="layui-form-mid fontColorRed " style="margin-right:2px;"></div>
+                <label class="layui-form-label">房屋地址：</label>
                 <div class="layui-input-inline">
-                    <select id="HouseType" lay-verify="required" lay-search="">
-                        <option value="-1">请选择房屋户型</option>
-                        <option value="0">两室一厅一厨一卫</option>
-                        <option value="1">三室一厅一厨一卫</option>
-                        <option value="2">三室两厅一厨一卫</option>
-                        <option value="3">三室两厅一厨两卫</option>
+                    <select id="Address" lay-verify="required" lay-search="">
+                        <option value="">请直接选择或搜索</option>
                     </select>
                 </div>
             </div>
@@ -57,15 +54,40 @@
         <div class="layui-form-item">
             <div class="layui-inline">
                 <div class="layui-form-mid fontColorRed " style="margin-right:2px;">*</div>
-                <label class="layui-form-label">房屋面积：</label>
+                <label class="layui-form-label">缴费类型</label>
                 <div class="layui-input-inline">
-                    <input name="HouseArea" id="HouseArea" placeholder="请输入房屋面积" autocomplete="off"
+                    <select id="CostType">
+                        <option value="-1">请选择缴费类型</option>
+                        <option value="1">水费</option>
+                        <option value="2">电费</option>
+                        <option value="3">物业费</option>
+                        <option value="4">停车费</option>
+                        <option value="5">煤气费</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <div class="layui-inline">
+                <div class="layui-form-mid fontColorRed " style="margin-right:2px;">*</div>
+                <label class="layui-form-label">缴费金额：</label>
+                <div class="layui-input-inline">
+                    <input name="CostMoney" id="CostMoney" placeholder="请输入缴费金额" autocomplete="off"
                         class="layui-input ReadOnlyState" type="text">
                 </div>
             </div>
         </div>
+        <div class="layui-form-item">
+            <div class="layui-inline">
+                <div class="layui-form-mid fontColorRed " style="margin-right:2px;">*</div>
+                <label class="layui-form-label">缴费时间：</label>
+                <div class="layui-input-inline">
+                    <input type="text" class="layui-input" id="test5" placeholder="yyyy-MM-dd HH:mm:ss">
+                </div>
+            </div>
+        </div>
         <div class="layui-form-item needhide">
-            <button class="layui-btn" lay-submit="" lay-filter="SaveHouse" id="SaveHouse">保存</button>
+            <button class="layui-btn" lay-submit="" lay-filter="SaveCost" id="SaveCost">保存</button>
             <button class="layui-btn" id="reset" type="button">取消</button>
         </div>
     </form>
@@ -80,13 +102,25 @@
                 layedit = layui.layedit,
                 upload = layui.upload;
 
+            //日期时间选择器
+            laydate.render({
+                elem: '#test5'
+                , type: 'datetime'
+            });
+
             layui.form.render();
+
+            //获取用户集合
+            selectUserList();
+
+            //获取房屋集合
+            selectHousrList();
 
             var subtips;
             //监听提交
-            form.on('submit(SaveHouse)', function (data) {
+            form.on('submit(SaveCost)', function (data) {
                 //  if (Faxtest() && Emailtest() && CompanyTeltest() && QQtest() && Phonetest()) {
-                if ($('#Address').val() != "" && $('#HouseType').val() != "-1" && $('#HouseArea').val != "") {
+                if ($('#CostType').val() != "-1" && $('#CostMoney').val() != "-1" && $('#test5').val != "") {
                     // if ($('#VideoName').val() == "") {
                     //     alert("请输入视频名称");
                     //     return false;
@@ -100,16 +134,13 @@
                     //     return false;
                     // }
                     var sendData = {
-                        "Address": $('#Address').val(),
-                        "HouseType": parseInt( $('#HouseType').val()),
-                        "HouseArea": $('#HouseArea').val()
-                        // "houseId": 1,
-                        // "numberId": "371522199855562589",
-                        // "phone": "18765838825",
-                        // "sex": 0,
-                        // "userName": "张三丰"
+                        "UserName": ($('#UserName').val() == "") ? null : parseInt($('#UserName').val()),
+                        "Address": ($('#Address').val() == "") ? null : parseInt($('#Address').val()),
+                        "CostType": parseInt($('#CostType').val()),
+                        "CostMoney": $('#CostMoney').val(),
+                        "PayTime": $('#test5').val()
                     };
-                    var url = 'https://localhost:44331/api/House/AddHouseInfo';
+                    var url = 'https://localhost:44331/api/Cost/AddCostInfo';
                     $.ajax({
                         url: url,
                         type: 'post',
@@ -156,6 +187,40 @@
             //layer.msg(index);
             parent.layer.close(index); //再执行关闭   
         });
+
+        //获取用户集合
+        function selectUserList() {
+            $.ajax({
+                url: 'https://localhost:44331/api/User/GetUserList',
+                dataType: 'json',
+                type: 'get',
+                async: false,
+                success: function (data) {
+                    $.each(data, function (index, item) {
+                        $('#UserName').append(new Option(item.userName, item.id));// 下拉菜单里添加元素
+                        //初始化所有select标签
+                        form.render("select");
+                    });
+                }
+            });
+        }
+
+        //获取房屋集合
+        function selectHousrList() {
+            $.ajax({
+                url: 'https://localhost:44331/api/House/GetHouseList',
+                dataType: 'json',
+                type: 'get',
+                async: false,
+                success: function (data) {
+                    $.each(data, function (index, item) {
+                        $('#Address').append(new Option(item.address, item.id));// 下拉菜单里添加元素
+                        //初始化所有select标签
+                        form.render("select");
+                    });
+                }
+            });
+        }
 
     </script>
 </body>
