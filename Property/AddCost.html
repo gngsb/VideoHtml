@@ -133,12 +133,16 @@
                     //     alert("请选择视频类别");
                     //     return false;
                     // }
+
+                    var time = new Date($('#test5').val());
+                    var payTime = time.setHours(time.getHours()+8)
+
                     var sendData = {
-                        "UserName": ($('#UserName').val() == "") ? null : parseInt($('#UserName').val()),
-                        "Address": ($('#Address').val() == "") ? null : parseInt($('#Address').val()),
-                        "CostType": parseInt($('#CostType').val()),
-                        "CostMoney": $('#CostMoney').val(),
-                        "PayTime": $('#test5').val()
+                        "userId": ($('#UserName').val() == "") ? null : parseInt($('#UserName').val()),
+                        "houseId": ($('#Address').val() == "") ? null : parseInt($('#Address').val()),
+                        "costType": $('#CostType').val(),
+                        "costMoney": $('#CostMoney').val(),
+                        "payTime": new Date(payTime)
                     };
                     var url = 'https://localhost:44331/api/Cost/AddCostInfo';
                     $.ajax({
@@ -150,7 +154,7 @@
                         success: function (data) {
                             if (data.code == 0) {
                                 layer.msg('房屋信息保存成功！');
-                                parent.location.href = "HouseList.html";
+                                parent.location.href = "CostList.html";
                                 parent.layer.close(index);
                                 ////执行重载
                                 //parent.layui.table.reload('tempTab', {
