@@ -2,7 +2,7 @@
 
 <head>
     <meta charset="UTF-8">
-    <title>缴费管理</title>
+    <title>报修管理</title>
     <meta name="renderer" content="webkit">
     <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
     <script src="../Scripts/jquery-3.3.1.js"></script>
@@ -33,64 +33,56 @@
     <form class="layui-form layui-form-pane" action="" lay-filter="SmsSignIndex">
         <div class="layui-form-item">
             <div class="layui-inline">
+                <input type="hidden" id="Rid" >
                 <div class="layui-form-mid fontColorRed" style="margin-right:2px;"></div>
-                <input type="hidden" name="Cid" id="Cid">
-                <label class="layui-form-label">用户姓名：</label>
+                <label class="layui-form-label">报修人：</label>
                 <div class="layui-input-inline">
-                    <select id="UserName" lay-verify="required" lay-search="">
-                        <option value="">请直接选择或搜索名</option>
-                    </select>
-                </div>
-            </div>
-        </div>
-        <div class="layui-form-item">
-            <div class="layui-inline">
-                <div class="layui-form-mid fontColorRed " style="margin-right:2px;"></div>
-                <label class="layui-form-label">房屋地址：</label>
-                <div class="layui-input-inline">
-                    <select id="Address" lay-verify="required" lay-search="">
-                        <option value="">请直接选择或搜索</option>
-                    </select>
-                </div>
-            </div>
-        </div>
-        <div class="layui-form-item">
-            <div class="layui-inline">
-                <div class="layui-form-mid fontColorRed " style="margin-right:2px;">*</div>
-                <label class="layui-form-label">缴费类型</label>
-                <div class="layui-input-inline">
-                    <select id="CostType">
-                        <option value="-1">请选择缴费类型</option>
-                        <option value="1">水费</option>
-                        <option value="2">电费</option>
-                        <option value="3">物业费</option>
-                        <option value="4">停车费</option>
-                        <option value="5">煤气费</option>
-                    </select>
-                </div>
-            </div>
-        </div>
-        <div class="layui-form-item">
-            <div class="layui-inline">
-                <div class="layui-form-mid fontColorRed " style="margin-right:2px;">*</div>
-                <label class="layui-form-label">缴费金额：</label>
-                <div class="layui-input-inline">
-                    <input name="CostMoney" id="CostMoney" placeholder="请输入缴费金额" autocomplete="off"
+                    <input name="UserName" id="UserName" placeholder="请输入报修人" autocomplete="off"
                         class="layui-input ReadOnlyState" type="text">
                 </div>
             </div>
         </div>
         <div class="layui-form-item">
             <div class="layui-inline">
-                <div class="layui-form-mid fontColorRed " style="margin-right:2px;">*</div>
-                <label class="layui-form-label">缴费时间：</label>
+                <div class="layui-form-mid fontColorRed " style="margin-right:2px;"></div>
+                <label class="layui-form-label">报修地址：</label>
+                <div class="layui-input-inline">
+                    <input name="Address" id="Address" placeholder="请输入报修地址" autocomplete="off"
+                        class="layui-input ReadOnlyState" type="text">
+                </div>
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <div class="layui-inline">
+                <div class="layui-form-mid fontColorRed " style="margin-right:2px;"></div>
+                <label class="layui-form-label">维修人：</label>
+                <div class="layui-input-inline">
+                    <input name="RepairName" id="RepairName" placeholder="请输入维修人" autocomplete="off"
+                        class="layui-input ReadOnlyState" type="text">
+                </div>
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <div class="layui-inline">
+                <div class="layui-form-mid fontColorRed " style="margin-right:2px;"></div>
+                <label class="layui-form-label">报修信息：</label>
+                <div class="layui-input-inline">
+                    <input name="Message" id="Message" placeholder="请输入报修信息" autocomplete="off"
+                        class="layui-input ReadOnlyState" type="text">
+                </div>
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <div class="layui-inline">
+                <div class="layui-form-mid fontColorRed " style="margin-right:2px;"></div>
+                <label class="layui-form-label">维修时间：</label>
                 <div class="layui-input-inline">
                     <input type="text" class="layui-input" id="test5" placeholder="yyyy-MM-dd HH:mm:ss">
                 </div>
             </div>
         </div>
         <div class="layui-form-item needhide">
-            <button class="layui-btn" lay-submit="" lay-filter="SaveHouse" id="SaveHouse">保存</button>
+            <button class="layui-btn" lay-submit="" lay-filter="SaveRepair" id="SaveRepair">保存</button>
             <button class="layui-btn" id="reset" type="button">取消</button>
         </div>
     </form>
@@ -115,48 +107,35 @@
                 , type: 'datetime'
             });
 
-            //获取用户集合
-            selectUserList();
-
-            //获取房屋集合
-            selectHousrList();
-
             //查询当前用户信息
-            selectHouseInfo();
+            selectRepairInfo();
 
             layui.form.render();
 
             var subtips;
             //监听提交
-            form.on('submit(SaveHouse)', function (data) {
+            form.on('submit(SaveRepair)', function (data) {
                 //  if (Faxtest() && Emailtest() && CompanyTeltest() && QQtest() && Phonetest()) {
-                if ($('#CostType').val() != "-1" && $('#CostMoney').val() != "-1" && $('#test5').val != "") {
-                    // if ($('#VideoName').val() == "") {
-                    //     alert("请输入视频名称");
-                    //     return false;
-                    // }
-                    // if ($('#IsActive').val() == "") {
-                    //     alert("请选择所属国家");
-                    //     return false;
-                    // }
-                    // if ($('#VideoType').val() == "-1") {
-                    //     alert("请选择视频类别");
-                    //     return false;
-                    // }
-                    
-                    var time = new Date($('#test5').val());
-                    var payTime = time.setHours(time.getHours()+8)
+                if ($('#UserName').val() != "" && $('#Address').val() != "" && $('#Message').val != "") {
+                    debugger;
+                    var repairTime;
+                    if ($('#test5').val() == "") {
+                        repairTime = null;
+                    } else {
+                        var time = new Date($('#test5').val());
+                        repairTime = new Date(time.setHours(time.getHours() + 8));
+                    }
+
 
                     var sendData = {
-                        "id": parseInt($('#Cid').val()),
-                        "userId": ($('#UserName').val() == "") ? null : parseInt($('#UserName').val()),
-                        "houseId": ($('#Address').val() == "") ? null : parseInt($('#Address').val()),
-                        "costType": $('#CostType').val(),
-                        "costMoney": $('#CostMoney').val(),
-                        "payTime": new Date(payTime)
-                        // "houseId": 1,
+                        "id": parseInt($('#Rid').val()),
+                        "userName": $('#UserName').val(),
+                        "address": $('#Address').val(),
+                        "repairName": $('#RepairName').val(),
+                        "message": $('#Message').val(),
+                        "repairTime": repairTime
                     };
-                    var url = 'https://localhost:44331/api/Cost/UpdateCostInfo';
+                    var url = 'https://localhost:44331/api/Repair/UpdateRepairInfo';
                     $.ajax({
                         url: url,
                         type: 'post',
@@ -165,8 +144,8 @@
                         dataType: 'json',
                         success: function (data) {
                             if (data.code == 0) {
-                                layer.msg('用户信息保存成功！');
-                                parent.location.href = "CostList.html";
+                                layer.msg('报修信息修改成功！');
+                                parent.location.href = "RepairList.html";
                                 parent.layer.close(index);
                                 ////执行重载
                                 //parent.layui.table.reload('tempTab', {
@@ -176,11 +155,11 @@
                                 //});
                                 // parent.layer.close(index);
                             } else if (data.code == 200) {
-                                layer.msg('用户信息保存失败');
+                                layer.msg('报修信息修改失败');
                             }
                         },
                         error: function (xhr) {
-                            layer.msg('保存失败！');
+                            layer.msg('修改失败！');
                         }
                     });
                     //} else {
@@ -204,21 +183,24 @@
             parent.layer.close(index); //再执行关闭   
         });
 
-        //获取当前房屋信息
-        function selectHouseInfo() {
-            var Cid = getQueryString("Cid");
-            $("#Cid").val(Cid);
+        //获取当前报修信息
+        function selectRepairInfo() {
+            var Rid = getQueryString("Rid");
+            $("#Rid").val(Rid);
             $.ajax({
-                url: 'https://localhost:44331/api/Cost/GetCostInfo?id=' + Cid,
+                url: 'https://localhost:44331/api/Repair/GetRepairInfo?id=' + Rid,
                 dataType: 'json',
                 type: 'get',
                 async: false,
                 success: function (data) {
-                    $("#UserName").val(data.userId);
-                    $("#Address").val(data.houseId);
-                    $("#CostType").val(data.costType);
-                    $("#CostMoney").val(data.costMoney);
-                    $("#test5").val(layui.util.toDateString(data.payTime, 'yyyy-MM-dd HH:mm:ss'));
+                    $("#UserName").val(data.userName);
+                    $("#Address").val(data.address);
+                    $("#RepairName").val(data.repairName);
+                    $("#Message").val(data.message);
+                    if(data.repairTime!=""&&data.repairTime!=null){
+                        $("#test5").val(layui.util.toDateString(data.repairTime, 'yyyy-MM-dd HH:mm:ss'));
+                    }
+                    
                     //初始化所有select标签
                     form.render("select");
                 }
@@ -232,40 +214,6 @@
                 return unescape(r[2]);
             }
             return null;
-        }
-
-        //获取用户集合
-        function selectUserList() {
-            $.ajax({
-                url: 'https://localhost:44331/api/User/GetUserList',
-                dataType: 'json',
-                type: 'get',
-                async: false,
-                success: function (data) {
-                    $.each(data, function (index, item) {
-                        $('#UserName').append(new Option(item.userName, item.id));// 下拉菜单里添加元素
-                        //初始化所有select标签
-                        form.render("select");
-                    });
-                }
-            });
-        }
-
-        //获取房屋集合
-        function selectHousrList() {
-            $.ajax({
-                url: 'https://localhost:44331/api/House/GetHouseList',
-                dataType: 'json',
-                type: 'get',
-                async: false,
-                success: function (data) {
-                    $.each(data, function (index, item) {
-                        $('#Address').append(new Option(item.address, item.id));// 下拉菜单里添加元素
-                        //初始化所有select标签
-                        form.render("select");
-                    });
-                }
-            });
         }
     </script>
 </body>

@@ -1,0 +1,179 @@
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <title>报修管理</title>
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <script src="../Scripts/jquery-3.3.1.js"></script>
+    <script src="../lib/layui/layui.js"></script>
+    <script src="../js/jsencrypt.min.js"></script>
+    <script src="../js/toolCommon.js"></script>
+    <link href="../lib/layui/css/layui.css" rel="stylesheet" />
+    <style>
+        .fontColorRed {
+            color: red;
+        }
+
+        .fontColordarkgray {
+            color: darkgray;
+        }
+    </style>
+    <style>
+        hr {
+            height: 0px;
+            border: 0px;
+        }
+    </style>
+</head>
+
+<body>
+    <form class="layui-form layui-form-pane" action="" lay-filter="SmsSignIndex">
+        <div class="layui-form-item">
+            <div class="layui-inline">
+                <div class="layui-form-mid fontColorRed" style="margin-right:2px;"></div>
+                <label class="layui-form-label">报修人：</label>
+                <div class="layui-input-inline">
+                    <input name="UserName" id="UserName" placeholder="请输入报修人" autocomplete="off"
+                        class="layui-input ReadOnlyState" type="text">
+                </div>
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <div class="layui-inline">
+                <div class="layui-form-mid fontColorRed " style="margin-right:2px;"></div>
+                <label class="layui-form-label">报修地址：</label>
+                <div class="layui-input-inline">
+                    <input name="Address" id="Address" placeholder="请输入报修地址" autocomplete="off"
+                        class="layui-input ReadOnlyState" type="text">
+                </div>
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <div class="layui-inline">
+                <div class="layui-form-mid fontColorRed " style="margin-right:2px;"></div>
+                <label class="layui-form-label">维修人：</label>
+                <div class="layui-input-inline">
+                    <input name="RepairName" id="RepairName" placeholder="请输入维修人" autocomplete="off"
+                        class="layui-input ReadOnlyState" type="text">
+                </div>
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <div class="layui-inline">
+                <div class="layui-form-mid fontColorRed " style="margin-right:2px;"></div>
+                <label class="layui-form-label">报修信息：</label>
+                <div class="layui-input-inline">
+                    <input name="Message" id="Message" placeholder="请输入报修信息" autocomplete="off"
+                        class="layui-input ReadOnlyState" type="text">
+                </div>
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <div class="layui-inline">
+                <div class="layui-form-mid fontColorRed " style="margin-right:2px;"></div>
+                <label class="layui-form-label">维修时间：</label>
+                <div class="layui-input-inline">
+                    <input type="text" class="layui-input" id="test5" placeholder="yyyy-MM-dd HH:mm:ss">
+                </div>
+            </div>
+        </div>
+        <div class="layui-form-item needhide">
+            <button class="layui-btn" lay-submit="" lay-filter="SaveRepair" id="SaveRepair">保存</button>
+            <button class="layui-btn" id="reset" type="button">取消</button>
+        </div>
+    </form>
+    <script type="text/javascript">
+        var form;
+        var layer;
+        ///加载
+        layui.use(['form', 'layedit', 'laydate', 'upload'], function () {
+            form = layui.form;
+            layer = layui.layer,
+                laydate = layui.laydate,
+                layedit = layui.layedit,
+                upload = layui.upload;
+
+            //日期时间选择器
+            laydate.render({
+                elem: '#test5'
+                , type: 'datetime'
+            });
+
+            layui.form.render();
+
+            var subtips;
+            //监听提交
+            form.on('submit(SaveRepair)', function (data) {
+                //  if (Faxtest() && Emailtest() && CompanyTeltest() && QQtest() && Phonetest()) {
+                if ($('#UserName').val() != "" && $('#Address').val() != "" && $('#Message').val != "") {
+                    
+                    //debugger;
+                    var repairTime;
+                    if ($('#test5').val() == "") {
+                        repairTime = null;
+                    } else {
+                        var time = new Date($('#test5').val());
+                        repairTime = new Date(time.setHours(time.getHours() + 8));
+                    }
+
+
+                    var sendData = {
+                        "userName": $('#UserName').val(),
+                        "address": $('#Address').val(),
+                        "repairName": $('#RepairName').val(),
+                        "message": $('#Message').val(),
+                        "repairTime": repairTime
+                    };
+                    var url = 'https://localhost:44331/api/Repair/AddRepairInfo';
+                    $.ajax({
+                        url: url,
+                        type: 'post',
+                        data: JSON.stringify(sendData),
+                        contentType: "application/json",
+                        dataType: 'json',
+                        success: function (data) {
+                            if (data.code == 0) {
+                                layer.msg('报修信息保存成功！');
+                                parent.location.href = "RepairList.html";
+                                parent.layer.close(index);
+                                ////执行重载
+                                //parent.layui.table.reload('tempTab', {
+                                //    page: {
+                                //        curr: 1 //重新从第 1 页开始
+                                //    }
+                                //});
+                                // parent.layer.close(index);
+                            } else if (data.code == 200) {
+                                layer.msg('房屋信息保存失败');
+                            }
+                        },
+                        error: function (xhr) {
+                            layer.msg('保存失败！');
+                        }
+                    });
+                    //} else {
+                    //    layer.msg('提交失败，请检查必填项是否遗漏！');
+                    //}
+                } else {
+                    layer.msg('提交失败，请检查必填项是否遗漏！');
+                }
+                return false;
+            });
+
+        });
+
+
+        //取消
+        $("#reset").click(function () {
+            //parent.location.href = "VideoList.html";
+            //layer.close(index);
+            var index = parent.layer.getFrameIndex(window.name); //先得到当前iframe层的索引
+            //layer.msg(index);
+            parent.layer.close(index); //再执行关闭   
+        });
+
+    </script>
+</body>
+
+</html>

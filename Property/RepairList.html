@@ -115,7 +115,7 @@
                 type: "GET",
                 where: {
                     UserName: $("#UserName").val(),
-                    Address: $("#$Address").val(),
+                    Address: $("#Address").val(),
                     RepairName: $("#RepairName").val(),
                     StartTime: $("#StartTime").val(),
                     EndTime: $("#EndTime").val()
@@ -126,7 +126,8 @@
                         { type: "numbers", title: "序号", align: "center", width: 70 },
                         { title: 'ID', field: 'id', align: "center", hide: "true", width: 50 },
                         {
-                            title: '报修人', field: 'userName', align: "center", width: 200  },
+                            title: '报修人', field: 'userName', align: "center", width: 200
+                        },
                         {
                             title: '报修地址', field: 'address', align: "center", width: 300
                         },
@@ -157,7 +158,8 @@
                     },
                     where: {
                         UserName: $("#UserName").val(),
-                        CostType: $("#CostType").val(),
+                        Address: $("#Address").val(),
+                        RepairName: $("#RepairName").val(),
                         StartTime: $("#StartTime").val(),
                         EndTime: $("#EndTime").val()
                     }
@@ -175,7 +177,7 @@
                         scrollbar: false,
                         maxmin: true,
                         title: "缴费信息编辑",
-                        content: 'EditCost.html?Cid=' + data.id
+                        content: 'EditRepair.html?Rid=' + data.id
                     });
                 }
             });
@@ -191,7 +193,7 @@
                 scrollbar: false,
                 maxmin: true,
                 title: "添加缴费信息",
-                content: 'AddCost.html',
+                content: 'AddRepair.html',
 
             });
         });
