@@ -107,7 +107,7 @@
             form.on('submit(SaveRepair)', function (data) {
                 //  if (Faxtest() && Emailtest() && CompanyTeltest() && QQtest() && Phonetest()) {
                 if ($('#UserName').val() != "" && $('#Address').val() != "" && $('#Message').val != "") {
-                    
+
                     //debugger;
                     var repairTime;
                     if ($('#test5').val() == "") {
@@ -129,6 +129,10 @@
                     $.ajax({
                         url: url,
                         type: 'post',
+                        crossDomain: true,//解决跨域配置
+                        xhrFields: {
+                            withCredentials: true//指定这个请求应该发送凭据
+                        },
                         data: JSON.stringify(sendData),
                         contentType: "application/json",
                         dataType: 'json',
