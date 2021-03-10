@@ -150,7 +150,14 @@
                 done: function (res, curr, count) {
                     //如果是异步请求数据方式，res即为你接口返回的信息。
                     //如果是直接赋值的方式，res即为：{data: [], count: 99} data为当前页数据、count为数据总长度
-
+                    if (res.code == "401") {
+                        layer.msg('登录已失效，请重新登录', {
+                            icon: 7,
+                            time: 2000 //2秒关闭（如果不配置，默认是3秒）
+                        }, function () {
+                            parent.location.href = "../Login.html";
+                        });
+                    }
                     layer.close(loading);
                 }
             });

@@ -144,6 +144,21 @@
                 done: function (res, curr, count) {
                     //如果是异步请求数据方式，res即为你接口返回的信息。
                     //如果是直接赋值的方式，res即为：{data: [], count: 99} data为当前页数据、count为数据总长度
+                    if (res.code == "401") {
+                        layer.msg('登录已失效，请重新登录', {
+                            icon: 7,
+                            time: 2000 //2秒关闭（如果不配置，默认是3秒）
+                        }, function () {
+                            parent.location.href = "../Login.html";
+                        });
+                    } else if (res.code == "402") {
+                        layer.msg('用户认证失败，请重新登录', {
+                            icon: 7,
+                            time: 2000 //2秒关闭（如果不配置，默认是3秒）
+                        }, function () {
+                            parent.location.href = "../Login.html";
+                        });
+                    }
 
                     layer.close(loading);
                 }
@@ -178,6 +193,26 @@
                         maxmin: true,
                         title: "缴费信息编辑",
                         content: 'EditRepair.html?Rid=' + data.id
+                    });
+                } else if (layEvent === 'delete') {
+                    $.ajax({
+                        url: 'https://localhost:44331/api/Repair/DelRepairInfo?id=' + data.id,
+                        dataType: 'json',
+                        type: 'get',
+                        success: function (data) {
+                            if (data.code == '0') {
+                                layer.msg('删除成功！', { time: 2000, icon: 1 });
+                                //执行重新加载
+                                table.reload('dg', {
+                                    page: {
+                                        curr: 1 //重新从第 1 页开始
+                                    }
+                                });
+                            } else {
+                                layer.msg('删除失败，请稍后再试！', { time: 2000, icon: 2 });
+                            }
+                            return false;
+                        }
                     });
                 }
             });
