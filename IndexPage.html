@@ -22,15 +22,16 @@
         var is_remember = false;
     </script>
     <style type="text/css">
-    a {
-        color: #fff;
+        a {
+            color: #fff;
 
-    }
-    iframe {
-        margin-top: 10px;
-        margin-left: 20px;
+        }
 
-    }
+        iframe {
+            margin-top: 10px;
+            margin-left: 20px;
+
+        }
     </style>
 </head>
 
@@ -148,16 +149,33 @@
     <!-- 右侧主体结束 -->
     <!-- 中部结束 -->
     <script>
-    function SignOut() {
-        //var token = localStorage["token"]
-        localStorage.removeItem("token");
-        layer.msg('德爷发出了skr skr的笑声', {
-            icon: 1,
-            time: 2000 //2秒关闭（如果不配置，默认是3秒）
-        }, function() {
-            parent.location.href = "Login.html";
-        });
-    }
+        function SignOut() {
+            //var token = localStorage["token"]
+            var url = 'https://localhost:44331/api/Account/LoginOut';
+            $.ajax({
+                url: url,
+                type: "post",
+                crossDomain: true,//解決跨域配置
+                xhrFields: {
+                    withCredentials: true //指定這個請求應該發送凭证
+                },
+                success: function (data) {
+                    if (data.code == 0) {
+                        localStorage.removeItem("token");
+                        layer.msg('德爷发出了skr skr的笑声', {
+                            icon: 1,
+                            time: 2000 //2秒关闭（如果不配置，默认是3秒）
+                        }, function () {
+                            parent.location.href = "Login.html";
+                        });
+                    } else {
+                        layer.msg('退出失败！');
+                    }
+                }
+            });
+
+
+        }
     </script>
 </body>
 
